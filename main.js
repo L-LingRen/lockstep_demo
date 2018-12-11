@@ -59,7 +59,7 @@ function logic_update() {
             var player = net_player;
             player.velocity.x = 0;
             player.velocity.y = 0;
-            console.log("收到的输入", last_packet);
+            // console.log("收到的输入", last_packet);
             switch(last_packet.input) {
                 case 38: 
                     player.velocity.y = -player.speed;
@@ -77,13 +77,13 @@ function logic_update() {
 
             logic_frame = next_frame;
         } else {
-            console.log("等待不到控制包信息", logic_frame);
+            // console.log("等待不到控制包信息", logic_frame);
         }
     } else {
         game_frame++;
-        console.log("不执行逻辑, 此期间应该正在scene_update进行平滑渲染");
+        // console.log("不执行逻辑, 此期间应该正在scene_update进行平滑渲染");
     }
-    // scene_update(10);
+    // 此处应该进行了, 逻辑帧的位置计算, 在scene_update进行平滑插值
 }
 
 // 渲染改动, 不稳定, update函数每台计算机的频率不一样
