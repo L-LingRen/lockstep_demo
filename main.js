@@ -130,7 +130,7 @@ function Client() {
     this.send_time_out = function (input) {
         setTimeout(function () {
             client.send(input);
-        }, 100);//延迟25ms发送
+        }, 25);//延迟25ms发送
     }
 
     // 模拟接收
