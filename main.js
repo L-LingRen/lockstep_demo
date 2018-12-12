@@ -101,17 +101,27 @@ function scene_update(dt) {
     var old_position_x = parseInt(net_player_element.css("left"));
     var old_position_y = parseInt(net_player_element.css("top"));
 
+    // 如果player的速度太快, 会导致abs_df过大, 在下一个logic_update前跟不上
+    var follow_speed = net_player.speed * dt / 1000;// 但这样会因dt不固定导致移动很生硬
+    if (follow_speed < 1) {// css的top等属性不能设置小数
+        follow_speed = 1;
+    }
+
     var df = net_player.position.x - old_position_x;
     var abs_df = Math.abs(df);
+
     if (abs_df >= 1) {
-        var temp = old_position_x + df / abs_df;
+        var temp = old_position_x + df / abs_df * follow_speed;
         net_player_element.css("left", temp + "px");
     }
 
+
+
     df = net_player.position.y - old_position_y;
     abs_df = Math.abs(df);
+
     if (abs_df >= 1) {
-        var temp = old_position_y + df / abs_df;
+        var temp = old_position_y + df / abs_df * follow_speed;
         net_player_element.css("top", temp + "px");
     }
 }
