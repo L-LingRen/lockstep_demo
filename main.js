@@ -7,18 +7,16 @@ var interval = setInterval(function () {
 });
 // clearInterval(interval);
 
-// 由于每台计算机的性能参差不齐, 所以需要统一每台计算机的逻辑帧频率
+// 统一渲染帧频率, 方便计算
 // 并且这里假设update频率远高于logic_update, 否则认为配置不够
 var accumulated_frame_time = 0;
-var logic_frame_interval = 20; //单位: ms, 每n毫秒执行一帧逻辑帧
+var render_frame_interval = 17; //单位: ms, 每n毫秒执行1帧渲染帧
 function update(dt) {
     accumulated_frame_time += dt;
-    if (accumulated_frame_time > logic_frame_interval) {
-        logic_update(logic_frame_interval);
-        accumulated_frame_time -= logic_frame_interval;
+    if (accumulated_frame_time > render_frame_interval) {
+        logic_update(render_frame_interval);
+        accumulated_frame_time -= render_frame_interval;
     }
-
-    scene_update(dt);
 }
 
 var game_frame = 0;
@@ -44,7 +42,9 @@ function logic_update(dt) {
         }
 
         if (last_packet && last_packet.frame == logic_frame) {
-            var next_frame = logic_frame + 1; // 1个逻辑帧发送一次
+            var logic_frame_interval = 5; // n帧逻辑帧发送1次位置, 计算1次逻辑
+            var next_frame = logic_frame + logic_frame_interval;
+
             // 采集当前的输入作为包发送(最后一次的输入)
             var input = {
                 "frame": next_frame,
@@ -54,8 +54,7 @@ function logic_update(dt) {
             // console.log("发送的输入", input);
 
             // 以last_packet.input做输入数据(此时是next_frame - 1数据)
-            // 模拟移动本地及网络客户端
-            // 每个客户端的逻辑一致
+            // 模拟移动本地及网络客户端, 每个客户端的逻辑一致
             var player = net_player;
             player.velocity.x = 0;
             player.velocity.y = 0;
@@ -75,8 +74,8 @@ function logic_update(dt) {
                     break;
             }
 
-            player.position.x += player.velocity.x * (dt / 1000);
-            player.position.y += player.velocity.y * (dt / 1000);
+            player.position.x += player.velocity.x * logic_frame_interval * dt / 1000;
+            player.position.y += player.velocity.y * logic_frame_interval * dt / 1000;
 
             logic_frame = next_frame;
         } else {
@@ -86,12 +85,12 @@ function logic_update(dt) {
         game_frame++;
         // console.log("不执行逻辑, 此期间应该正在scene_update进行平滑渲染");
     }
+    scene_update(dt);
 }
 
-// 渲染, update函数每台计算机的频率不一样
-// 因此平滑渲染以最快的速度跟上逻辑帧
+// 让画面流畅的诀窍在于scene_update"刚好"在下一次发送数据前一刻完成渲染
+// 也就是每1次发送后, 执行5次abs_df >= 2里的逻辑, 本程序提前了1帧左右完成了渲染.
 var net_player_element;
-var accumulated_show_frame = 0;
 function scene_update(dt) {
 
     if (!net_player_element) {
@@ -101,17 +100,13 @@ function scene_update(dt) {
     var old_position_x = parseInt(net_player_element.css("left"));
     var old_position_y = parseInt(net_player_element.css("top"));
 
-    // 如果player的速度太快, 会导致abs_df过大, 在下一个logic_update前跟不上
-    var follow_speed = net_player.speed * dt / 1000;// 但这样会因dt不固定导致移动很生硬
-    if (follow_speed < 1) {// css的top等属性不能设置小数
-        follow_speed = 1;
-    }
-
     var df = net_player.position.x - old_position_x;
     var abs_df = Math.abs(df);
 
-    if (abs_df >= 1) {
-        var temp = old_position_x + df / abs_df * follow_speed;
+    if (abs_df >= 2) { // 防抖动, 缺陷是和逻辑位置有1~2个像素偏差
+        var ddf = df / abs_df * net_player.speed * dt / 1000;
+        ddf = ddf > 0 ? Math.ceil(ddf) : Math.floor(ddf);
+        var temp = old_position_x + ddf;
         net_player_element.css("left", temp + "px");
     }
 
@@ -120,8 +115,10 @@ function scene_update(dt) {
     df = net_player.position.y - old_position_y;
     abs_df = Math.abs(df);
 
-    if (abs_df >= 1) {
-        var temp = old_position_y + df / abs_df * follow_speed;
+    if (abs_df >= 2) {
+        var ddf = df / abs_df * net_player.speed * dt / 1000;
+        ddf = ddf > 0 ? Math.ceil(ddf) : Math.floor(ddf);
+        var temp = old_position_y + Math.ceil(ddf);
         net_player_element.css("top", temp + "px");
     }
 }
