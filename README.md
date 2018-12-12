@@ -1,11 +1,10 @@
-# lockstep_demo
-使用js模拟游戏引擎(如unity3d)的update和socket的收发, 而写出来的demo。
-并不完善, 仅供参考, 请勿照搬, 仅参考了文献[1]实现了lockstep的基本逻辑。
-
-发现的缺陷: 
-    1.延迟受逻辑帧的间隔和网络2个主要因素影响。
-    
-    2.延迟至少为逻辑帧的间隔(把logic_frame_interval调高可明显观察)。
+# lockstep_demo  
+使用js模拟游戏引擎(如unity3d)的update和socket的收发, 而写出来的demo。  
+并不完善, 仅供参考, 请勿照搬, 仅参考了文献[1]实现了lockstep的基本逻辑。  
+  
+发现的缺陷:   
+    1.延迟受逻辑帧的间隔和网络2个主要因素影响。  
+    2.延迟至少为逻辑帧的间隔(把logic_frame_interval调高可明显观察)。  
     
 
 
