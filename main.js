@@ -8,6 +8,7 @@ var interval = setInterval(function () {
 // clearInterval(interval);
 
 // 由于每台计算机的性能参差不齐, 所以需要统一每台计算机的逻辑帧频率
+// 并且这里假设update频率远高于logic_update, 否则认为配置不够
 var accumulated_frame_time = 0;
 var logic_frame_interval = 20; //单位: ms, 每n毫秒执行一帧逻辑帧
 function update(dt) {
@@ -28,7 +29,7 @@ function logic_update(dt) {
             "frame": logic_frame,
             "input": input_direction,
         };
-        client.send(input);
+        client.send_time_out(input);
         console.log("初始化发送");
     }
 
@@ -55,7 +56,6 @@ function logic_update(dt) {
             // 以last_packet.input做输入数据(此时是next_frame - 1数据)
             // 模拟移动本地及网络客户端
             // 每个客户端的逻辑一致
-            // TO_DO()....
             var player = net_player;
             player.velocity.x = 0;
             player.velocity.y = 0;
