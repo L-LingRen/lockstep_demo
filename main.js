@@ -13,7 +13,7 @@ var logic_frame_interval = 20; //单位: ms, 每n毫秒执行一帧逻辑帧
 function update(dt) {
     accumulated_frame_time += dt;
     if (accumulated_frame_time > logic_frame_interval) {
-        logic_update();
+        logic_update(logic_frame_interval);
         accumulated_frame_time -= logic_frame_interval;
     }
 
@@ -22,7 +22,7 @@ function update(dt) {
 
 var game_frame = 0;
 var logic_frame = 0;
-function logic_update() {
+function logic_update(dt) {
     if (game_frame == 0 && logic_frame == 0) {
         var input = {
             "frame": logic_frame,
@@ -75,44 +75,44 @@ function logic_update() {
                     break;
             }
 
+            player.position.x += player.velocity.x * (dt / 1000);
+            player.position.y += player.velocity.y * (dt / 1000);
+
             logic_frame = next_frame;
         } else {
-            // console.log("等待不到控制包信息", logic_frame);
+            console.log("等待不到控制包信息", logic_frame);
         }
     } else {
         game_frame++;
         // console.log("不执行逻辑, 此期间应该正在scene_update进行平滑渲染");
     }
-    // 此处应该进行了, 逻辑帧的位置计算, 在scene_update进行平滑插值
 }
 
-// 渲染改动, 不稳定, update函数每台计算机的频率不一样
+// 渲染, update函数每台计算机的频率不一样
+// 因此平滑渲染以最快的速度跟上逻辑帧
 var net_player_element;
 var accumulated_show_frame = 0;
 function scene_update(dt) {
 
-    // 由于css里top等属性不能设置小数，因此改成达到1px的时间时才进行渲染
-    accumulated_show_frame += dt;
-    var target_frame = 1000 / net_player.speed; // player速度100px/1000ms, 则1px/10ms
-    if (accumulated_show_frame > target_frame) {
+    if (!net_player_element) {
+        net_player_element = $('#net_player');
+    }
 
-        if (!net_player_element) {
-            net_player_element = $('#net_player');
-        }
+    var old_position_x = parseInt(net_player_element.css("left"));
+    var old_position_y = parseInt(net_player_element.css("top"));
 
-        if (net_player.velocity.x != 0) {
-            var old_x = parseInt(net_player_element.css("left"));
-            var temp = old_x + net_player.velocity.x / net_player.speed; // 不能直接设置1, 因为方向不能丢, 所以进行单位化
-            net_player_element.css("left", temp + "px");
-        }
+    var df = net_player.position.x - old_position_x;
+    var abs_df = Math.abs(df);
+    if (abs_df >= 1) {
+        var temp = old_position_x + df / abs_df;
+        net_player_element.css("left", temp + "px");
+    }
 
-        if (net_player.velocity.y != 0) {
-            var old_y = parseInt(net_player_element.css("top"));
-            var temp = old_y + net_player.velocity.y / net_player.speed; // 不能直接设置1, 因为方向不能丢, 所以进行单位化
-            net_player_element.css("top", temp + "px");
-        }
-
-        accumulated_show_frame -= target_frame;
+    df = net_player.position.y - old_position_y;
+    abs_df = Math.abs(df);
+    if (abs_df >= 1) {
+        var temp = old_position_y + df / abs_df;
+        net_player_element.css("top", temp + "px");
     }
 }
 
@@ -177,9 +177,13 @@ $(document).keydown(function(e) {
 // var local_player = new Player();
 var net_player = new Player();
 function Player() {
-    this.speed = 100;  // 每秒10px
+    this.speed = 100;  // 每秒移动n px
 
     this.velocity = new Object();
     this.velocity.x = 0;
     this.velocity.y = 0;
+
+    this.position = new Object();
+    this.position.x = 0;
+    this.position.y = 0;
 }
