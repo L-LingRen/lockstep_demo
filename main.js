@@ -42,7 +42,7 @@ function logic_update(dt) {
         }
 
         if (last_packet && last_packet.frame == logic_frame) {
-            var logic_frame_interval = 5; // n帧逻辑帧发送1次位置, 计算1次逻辑
+            var logic_frame_interval = 3; // n帧逻辑帧发送1次位置, 计算1次逻辑
             var next_frame = logic_frame + logic_frame_interval;
 
             // 采集当前的输入作为包发送(最后一次的输入)
@@ -89,7 +89,7 @@ function logic_update(dt) {
 }
 
 // 让画面流畅的诀窍在于scene_update"刚好"在下一次发送数据前一刻完成渲染
-// 也就是每1次发送后, 执行5次abs_df >= 2里的逻辑, 本程序提前了1帧左右完成了渲染.
+// 也就是每1次发送后, 执行logic_frame_interval次abs_df >= 2里的逻辑.
 var net_player_element;
 function scene_update(dt) {
 
@@ -118,7 +118,7 @@ function scene_update(dt) {
     if (abs_df >= 2) {
         var ddf = df / abs_df * net_player.speed * dt / 1000;
         ddf = ddf > 0 ? Math.ceil(ddf) : Math.floor(ddf);
-        var temp = old_position_y + Math.ceil(ddf);
+        var temp = old_position_y + ddf;
         net_player_element.css("top", temp + "px");
     }
 }
@@ -127,6 +127,12 @@ function scene_update(dt) {
 var client = new Client();
 function Client() {
     this.packets = new Array();
+    // this.packets = [
+    //     {
+    //         "frame": next_frame,
+    //         "input": input_direction,
+    //     }, 
+    // ];
 
     // 模拟无延迟发送
     this.send = function (input) {
@@ -184,7 +190,7 @@ $(document).keydown(function(e) {
 // var local_player = new Player();
 var net_player = new Player();
 function Player() {
-    this.speed = 100;  // 每秒移动n px
+    this.speed = 1000;  // 每秒移动n px
 
     this.velocity = new Object();
     this.velocity.x = 0;
