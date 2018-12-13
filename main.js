@@ -17,6 +17,9 @@ function update(dt) {
         logic_update(render_frame_interval);
         accumulated_frame_time -= render_frame_interval;
     }
+
+    // 在此渲染, dt会比较小, 即时间切片是运行的代码极其里最小的, 渲染流畅
+    scene_update(dt);
 }
 
 var game_frame = 0;
@@ -85,7 +88,9 @@ function logic_update(dt) {
         game_frame++;
         // console.log("不执行逻辑, 此期间应该正在scene_update进行平滑渲染");
     }
-    scene_update(dt);
+
+    // 在此渲染, dt会比较大, 即时间切片较大, 渲染有一丝不流畅
+    // scene_update(dt);
 }
 
 // 让画面流畅的诀窍在于scene_update"刚好"在下一次发送数据前一刻完成渲染
@@ -190,7 +195,7 @@ $(document).keydown(function(e) {
 // var local_player = new Player();
 var net_player = new Player();
 function Player() {
-    this.speed = 1000;  // 每秒移动n px
+    this.speed = 500;  // 每秒移动n px
 
     this.velocity = new Object();
     this.velocity.x = 0;
