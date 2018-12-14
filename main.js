@@ -18,7 +18,7 @@ function update(dt) {
         accumulated_frame_time -= render_frame_interval;
     }
 
-    // 在此渲染, dt会比较小, 即时间切片是运行的代码极其里最小的, 渲染流畅
+    // 在此渲染, dt会比较小, 即时间切片是运行的代码机器里最小的, 渲染流畅
     scene_update(dt);
 }
 
