@@ -131,7 +131,7 @@ function logic_update(dt) {
         net_player.position.x += (net_player.velocity.x * dt / 1000);
         net_player.position.y += (net_player.velocity.y * dt / 1000);
     } else {
-        console.log("等待不到控制包信息", logic_frame);
+        console.log("等待不到控制包信息, 卡顿等待", logic_frame);
     }
 
     // 在此渲染, dt会比较大, 即时间切片较大, 渲染不流畅
@@ -188,7 +188,7 @@ function Client() {
         this.receive(input);
     }
 
-    // 模拟延迟发送
+    // 模拟延迟发送, 网络延迟大于logic_frame_interval时才会出现卡顿
     this.send_time_out = function (input) {
         setTimeout(function () {
             client.send(input);
