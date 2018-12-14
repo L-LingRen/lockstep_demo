@@ -48,8 +48,8 @@ $(document).keydown(function(e) {
 });
 
 // 模拟按住↓方向键1000ms
-var input_direction = 40; 
-setTimeout(function(){clearInterval(interval);}, 1000);
+// var input_direction = 40; 
+// setTimeout(function(){clearInterval(interval);}, 1000);
 
 // 模拟游戏引擎的update
 var last_update = Date.now();
