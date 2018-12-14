@@ -93,8 +93,7 @@ function logic_update(dt) {
     // scene_update(dt);
 }
 
-// 让画面流畅的诀窍在于scene_update"刚好"在下一次发送数据前一刻完成渲染
-// 也就是每1次发送后, 执行logic_frame_interval次abs_df >= 2里的逻辑.
+// 让画面流畅的诀窍在于scene_update"刚好"在下一逻辑帧前一刻完成渲染
 var net_player_element;
 function scene_update(dt) {
 
