@@ -134,7 +134,7 @@ function logic_update(dt) {
         console.log("等待不到控制包信息", logic_frame);
     }
 
-    // 在此渲染, dt会比较大, 即时间切片较大, 渲染有一丝不流畅
+    // 在此渲染, dt会比较大, 即时间切片较大, 渲染不流畅
     // scene_update(dt);
 }
 
