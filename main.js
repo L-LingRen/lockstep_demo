@@ -2,7 +2,7 @@
 // var local_player = new Player();
 var net_player = new Player();
 function Player() {
-    this.speed = 500;  // 每秒移动n px
+    this.speed = 1000;  // 每秒移动n px
 
     this.velocity = new Object();
     this.velocity.x = 0;
@@ -47,9 +47,9 @@ $(document).keydown(function(e) {
     }
 });
 
-// 模拟按住↓方向键1000ms
+// // 模拟按住↓方向键1000ms
 // var input_direction = 40; 
-// setTimeout(function(){clearInterval(interval);}, 1000);
+// setTimeout(function(){input_direction = 0;}, 1000);
 
 // 模拟游戏引擎的update
 var last_update = Date.now();
@@ -77,7 +77,7 @@ function update(dt) {
 
 var logic_frame = 0;
 function logic_update(dt) {
-    // console.log("1000ms应该跑19次才对");
+    // console.log("1000ms应该跑20次才对");
     
     if (logic_frame == 0) {
         var input = {
