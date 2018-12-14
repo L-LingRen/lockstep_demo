@@ -1,5 +1,5 @@
 # lockstep_demo  
-使用js模拟游戏引擎(如unity3d)的update和socket的收发, 而写出来的demo。  
+使用js模拟游戏引擎(如unity3d)和socket, 而写出来的lockstep(亦称: 帧同步、锁帧同步)demo。  
 参考文献后仅仅实现了lockstep的基本逻辑, 并不完善(如:没写堆积包加速处理), 仅供参考, 请勿照搬。  
 有误请包涵, 谢谢!  
 

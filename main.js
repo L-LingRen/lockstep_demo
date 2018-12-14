@@ -63,7 +63,7 @@ var interval = setInterval(function () {
 
 // 并且这里假设update频率远高于logic_update, 否则认为配置不够
 var accumulated_frame_time = 0;
-var logic_frame_interval = 100; //单位: ms, 每n毫秒执行1帧逻辑帧
+var logic_frame_interval = 50; //单位: ms, 每n毫秒执行1帧逻辑帧
 function update(dt) {
     accumulated_frame_time += dt;
     if (accumulated_frame_time > logic_frame_interval) {
