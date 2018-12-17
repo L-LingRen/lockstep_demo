@@ -105,7 +105,7 @@ function logic_update(dt) {
             "frame": next_frame,
             "input": input_direction,
         };
-        client.send_time_out(input);
+        client.send_with_delay(input);
         // console.log("发送的输入", input);
 
         // 以last_packet.input做输入数据(此时是next_frame - 1数据)
@@ -189,7 +189,7 @@ function Client() {
     }
 
     // 模拟延迟发送, 网络延迟大于logic_frame_interval时才会出现卡顿
-    this.send_time_out = function (input) {
+    this.send_with_delay = function (input) {
         setTimeout(function () {
             client.send(input);
         }, 25);//延迟25ms发送
