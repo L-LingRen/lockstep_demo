@@ -200,3 +200,10 @@ function Client() {
         this.packets.push(input);
     }
 }
+
+// 服务器个人认为做成传统的lockstep模式, 外加"超时不等待"的方式进行实现
+// 举个例子: 服务器收到最早的client传来的消息, 表明帧回合开始。 
+//          如果在(logic_frame_interval / 2)内收到所有玩家的输入则立即发出, 
+//          否则等够(logic_frame_interval / 2)后不再等待其他玩家, 直接发出。 
+//          (注: client和server一次消息来回只有logic_frame_interval, 
+//           包括网络延迟, 否则会让client出现卡住)
